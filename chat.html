@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatAI</title>
+  <link rel="icon" href="chat.ico">
+  <link rel="stylesheet" href="chat.css">
+  <link rel="stylesheet" href="code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      },  
+      startup: {
+        ready() {
+            MathJax.startup.defaultReady();
+        }
+    },
+  };
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="mathjax/tex-mml-chtml.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body>
+  <div id="app">
+    <div class="sidebar" :class="{ active: isSidebarVisible }">
+      <div class="card">
+        <h1>ChatAI</h1>
+        <p>Your own AI assistant.</p>
+      </div>
+      <div class="conversations-list">
+        <ul>
+          <li class="conversation-s" v-for="(conversation, index) in conversations" :key="index" @click="selectConversation(index)" :class="{ active: selectedConversationIndex === index }">
+            {{ conversation.name }}
+            <button class="delete" @click.stop="deleteConversation(index)">删除</button>
+          </li>
+        </ul>
+      </div>
+      <div class="card model-selection">
+        <i class="fas fa-robot"></i>
+        <select id="model-select" v-model="selectedModel">
+          <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+          <option value="gpt-3.5-turbo-1106">gpt-3.5-turbo-1106</option>
+          <option value="gpt-3.5-turbo-0125">gpt-3.5-turbo-0125</option>
+          <option value="gpt-4-turbo">gpt-4-turbo</option>
+          <option value="gpt-4o">gpt-4o</option>
+        </select>
+      </div>
+      <div class="container">
+        <div class="add-button-container">
+          <button class="add-conversation-button" @click="addNewConversation"><i class="fas fa-plus"></i> 新对话</button>
+        </div>
+      </div>
+    </div>
+      <chat-window 
+        v-if="currentConversation !== null" 
+        :messages="conversations[currentConversation].messages" 
+        @send-message="sendMessage"
+        :toggle-sidebar="toggleSidebar" 
+      >
+      </chat-window>
+    </div>
+    <script src="https://unpkg.com/vue@3.4.29/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios@1.7.2/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="marked/marked.min.js"></script>
+    <script src="chat.js"></script>
+  </body>
+  </html>
+  

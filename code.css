@@ -1,0 +1,46 @@
+pre {
+  background-color: #1a1b26; /* 设置背景颜色 */
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: pre; /* 不换行，启用水平滚动 */
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace; /* 设置字体 */
+  font-size: 14px;
+}
+
+code {
+  background-color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  border: 1px solid#ffffff;
+  border-radius: 8px;
+  padding: 3px 4px;
+  cursor: pointer;
+  font-size: 11px;
+  display: none;
+}
+
+pre:hover .copy-button {
+  display: block; /* 鼠标悬停时显示 */
+}
+
+.copy-success-message {
+  position: fixed;
+  top: 15px;
+  right: 40%;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-size:small;
+}
