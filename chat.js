@@ -21,7 +21,7 @@ const ChatWindow = {
         </label>
         <input type="file" id="imageUpload" style="display: none;"> 
         <div class="chat-input">
-          <textarea class="input" v-model="newMessage" @keydown="handleKeyDown" placeholder="Enter 发送，Shift + Enter 换行"></textarea>
+          <textarea id="input" v-model="newMessage" @keydown="handleKeyDown" placeholder="Enter 发送，Shift + Enter 换行"></textarea>
           <button @click="sendMessage">发送</button>
         </div>
       </div>
@@ -63,7 +63,15 @@ const ChatWindow = {
         event.preventDefault();
         if (event.shiftKey) {
           event.preventDefault();
-          this.newMessage += '\n';
+          const textarea = event.target;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const text = textarea.value;
+          const newText = text.substring(0, start) + '\n' + text.substring(end);
+          textarea.value = newText;
+          textarea.setSelectionRange(start + 1, start + 1);
+          console.log(textarea.value);
+          this.newMessage = textarea.value;
         } else {
           event.preventDefault();
           this.sendMessage();
@@ -101,7 +109,6 @@ const ChatWindow = {
           const blocks = this.$el.querySelectorAll('pre code');
           blocks.forEach((block) => {
             hljs.highlightElement(block);
-            // Add copy button to each code block
             if (!block.parentElement.querySelector('.copy-button')) {
               const button = document.createElement('button');
               button.innerText = 'copy';
@@ -142,7 +149,6 @@ const ChatWindow = {
       this.selectedConversationIndex = index;
       this.currentConversation = index;
   
-      // 在手机端隐藏侧边栏
       if (window.innerWidth <= 768) { 
         this.isSidebarVisible = false;
       }
@@ -195,9 +201,9 @@ const app = Vue.createApp({
         },
       ],
       currentConversation: 0,
-      selectedModel: 'gpt-4o', // Default model
-      selectedConversationIndex: null, // 默认没有选中的对话
-      isSidebarVisible: false, // 默认隐藏侧边栏
+      selectedModel: 'gpt-4o',
+      selectedConversationIndex: null, 
+      isSidebarVisible: false, 
     };
   },
   mounted() {
@@ -219,8 +225,6 @@ const app = Vue.createApp({
   methods: {
     sendMessage(message) {
       const currentMessages = this.conversations[this.currentConversation].messages;
-
-      // 转义 HTML 代码
       const escapedMessage = escapeHtml(message);
       const Messages = marked.parse(escapedMessage);
       
@@ -230,12 +234,9 @@ const app = Vue.createApp({
         displayContent: Messages.replace(/\n$/g,''),
       });
 
-      // 更新对话名称为第一条用户消息
       if (currentMessages.length === 2) {
         this.conversations[this.currentConversation].name = currentMessages[1].content.substring(0, 16);
       }
-
-      // 发送消息后立即保存对话数据
       this.saveConversations();
 
       this.sendMessageToAPI(message, this.currentConversation)
@@ -248,7 +249,6 @@ const app = Vue.createApp({
             displayContent: markedbotmessage,
           });
 
-          // 在机器人回复后立即保存对话数据
           this.saveConversations();
 
           this.typeMessage(currentMessages[currentMessages.length - 1]);
@@ -269,7 +269,6 @@ const app = Vue.createApp({
             displayContent: '<p>发送消息失败，请稍后重试。</p>',
           });
 
-          // 保存错误消息到对话数据
           this.saveConversations();
         });
 
@@ -279,7 +278,7 @@ const app = Vue.createApp({
       });
     },
     async sendMessageToAPI(userMessage, conversationIndex) {
-      const apiKey = 'sk-deanxv-cdp'; // 替换为你的实际 API 密钥
+      const apiKey = 'your_apikey'; 
       const conversation = this.conversations[conversationIndex];
 
       try {
@@ -288,14 +287,14 @@ const app = Vue.createApp({
           content: message.content,
         }));
 
-        const response = await fetch('https://cdp.aytsao.cn/v1/chat/completions', {
+        const response = await fetch('/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
-            model: this.selectedModel, // Use the selected model
+            model: this.selectedModel,
             messages: messagesForAPI,
             max_tokens: '12800'
           }),
@@ -339,7 +338,7 @@ const app = Vue.createApp({
             displayContent: '<p>你好，我是 AI 机器人，请问有什么问题可以帮助您？</p>',
           },
         ],
-        selectedModel: this.selectedModel, // 使用当前选定的模型
+        selectedModel: this.selectedModel, 
       };
       this.conversations.push(newConversation);
       this.currentConversation = this.conversations.length - 1;
@@ -415,7 +414,7 @@ const app = Vue.createApp({
 
       setTimeout(() => {
         document.body.removeChild(message);
-      }, 2000); // Remove after 2 seconds
+      }, 2000); 
     },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
@@ -424,7 +423,7 @@ const app = Vue.createApp({
     selectConversation(index) {
       this.selectedConversationIndex = index;
       this.currentConversation = index;
-      // 在手机端隐藏侧边栏
+
       if (window.innerWidth <= 600) { 
         this.isSidebarVisible = false;
       }
