@@ -232,66 +232,63 @@ body {
 }
 
 .input-area {
-  align-items: center;
   padding: 15px 1px;
   background-color: white;
   border-top: 1px solid #ccc;
-  height: 100px;
+  border-radius: 2%;
 }
 
-#input {
+textarea {
   background: white;
   font-size: 16px;
   width: 100%;
   height: auto;
-  border-radius: 5px; 
+  border-radius: 5px;
   padding: 10px;
   border: none;
-  resize: none; 
-  flex-grow: 1; 
-  margin-right: 10px; 
+  resize: none;
+  flex-grow: 1;
+  margin-right: 10px;
   outline: none;
+  max-height: 120px;
+  box-sizing: border-box;
 }
 
 .input-area button {
-  padding: 8px 16px; 
-  background-color: rgba(36, 160, 255, 0.9); 
-  color: white; 
+  padding: 8px 16px;
+  background-color: rgba(36, 160, 255, 0.9);
+  color: white;
   border: none;
-  border-radius: 10px; 
+  border-radius: 10px;
   cursor: pointer;
   font-size: 12px;
-  white-space: nowrap; 
-  display: flex; 
-  align-items: center; 
-  position: flex;
+  white-space: nowrap;
+  align-self: flex-end;
   height: 35px;
-  margin-right: 8px; 
-  margin-top: 30px; 
-  margin-bottom: 10px; 
+  margin-left: 10px;
 }
 
-.input-area button::before { 
-  content: '\f1d8'; 
-  font-family: 'Font Awesome 5 Free'; 
-  font-weight: 800; 
-  margin-right: 5px; 
+.input-area button::before {
+  content: '\f1d8';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 800;
+  margin-right: 5px;
 }
 
 .chat-input {
-  cursor: text;
   display: flex;
-  flex: 1 1;
+  align-items: flex-end;
   border-radius: 5px;
   border: 1px solid #ccc;
-  margin-right: 10px; 
+  margin-right: 10px;
   margin-left: 11px;
+  padding: 10px;
 }
 
-.chat-input:focus-within { 
+.chat-input:focus-within {
   outline: none;
-  border-color: rgb(136, 203, 119); 
-  box-shadow: 0 0 5px rgba(68, 176, 58, 0.5); 
+  border-color: rgb(136, 203, 119);
+  box-shadow: 0 0 5px rgba(68, 176, 58, 0.5);
 }
 
 .message .avatar {

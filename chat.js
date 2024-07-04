@@ -21,7 +21,7 @@ const ChatWindow = {
         </label>
         <input type="file" id="imageUpload" style="display: none;"> 
         <div class="chat-input">
-          <textarea id="input" v-model="newMessage" @keydown="handleKeyDown" placeholder="Enter 发送，Shift + Enter 换行"></textarea>
+          <textarea v-model="newMessage" @keydown="handleKeyDown" placeholder="Enter 发送，Shift + Enter 换行" ref="textarea"></textarea>
           <button @click="sendMessage">发送</button>
         </div>
       </div>
@@ -170,8 +170,10 @@ const ChatWindow = {
       console.error('MathJax is not loaded');
     }
   },
+  mounted() {
+    autosize(this.$refs.textarea);
+  },
 };
-
 const escapeHtml = (unsafe) => {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -180,7 +182,6 @@ const escapeHtml = (unsafe) => {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 };
-
 const app = Vue.createApp({
   components: {
     ChatWindow,
