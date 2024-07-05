@@ -48,6 +48,7 @@ const ChatWindow = {
       const formattedMessage = this.newMessage;
       this.$emit('send-message', formattedMessage);
       this.newMessage = '';
+      autosize.destroy(this.$refs.textarea);
       this.$nextTick(() => {
         if (typeof MathJax !== 'undefined') {
           MathJax.typesetPromise().then(() => {
@@ -202,7 +203,7 @@ const app = Vue.createApp({
         },
       ],
       currentConversation: 0,
-      selectedModel: 'gpt-4o',
+      selectedModel: 'gemini-1.5-pro',
       selectedConversationIndex: null, 
       isSidebarVisible: false, 
     };
@@ -279,7 +280,7 @@ const app = Vue.createApp({
       });
     },
     async sendMessageToAPI(userMessage, conversationIndex) {
-      const apiKey = 'your_apikey'; 
+      const apiKey = 'sk-NPqbzUdYaF0mlKKy28EfE38587Ba4e079b928e202933C94c'; 
       const conversation = this.conversations[conversationIndex];
 
       try {
@@ -288,7 +289,7 @@ const app = Vue.createApp({
           content: message.content,
         }));
 
-        const response = await fetch('/v1/chat/completions', {
+        const response = await fetch('https://api.zwdblog.online/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -297,7 +298,7 @@ const app = Vue.createApp({
           body: JSON.stringify({
             model: this.selectedModel,
             messages: messagesForAPI,
-            max_tokens: '12800'
+            "max_tokens": 10000,
           }),
         });
 
