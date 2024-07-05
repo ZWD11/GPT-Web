@@ -203,7 +203,7 @@ const app = Vue.createApp({
         },
       ],
       currentConversation: 0,
-      selectedModel: 'gemini-1.5-pro',
+      selectedModel: 'gpt-4o',
       selectedConversationIndex: null, 
       isSidebarVisible: false, 
     };
@@ -280,7 +280,7 @@ const app = Vue.createApp({
       });
     },
     async sendMessageToAPI(userMessage, conversationIndex) {
-      const apiKey = 'sk-NPqbzUdYaF0mlKKy28EfE38587Ba4e079b928e202933C94c'; 
+      const apiKey = 'Api_key'; 
       const conversation = this.conversations[conversationIndex];
 
       try {
@@ -289,7 +289,7 @@ const app = Vue.createApp({
           content: message.content,
         }));
 
-        const response = await fetch('https://api.zwdblog.online/v1/chat/completions', {
+        const response = await fetch('/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
