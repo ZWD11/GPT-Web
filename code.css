@@ -1,10 +1,10 @@
 pre {
-  background-color: #1a1b26; /* 设置背景颜色 */
+  background-color: #1a1b26;
   padding: 10px;
   border-radius: 5px;
   overflow-x: auto;
-  white-space: pre; /* 不换行，启用水平滚动 */
-  font-family: 'Consolas', 'Monaco', 'Menlo', monospace; /* 设置字体 */
+  white-space: pre; 
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
   font-size: 14px;
 }
 
@@ -29,7 +29,7 @@ code {
 }
 
 pre:hover .copy-button {
-  display: block; /* 鼠标悬停时显示 */
+  display: block;
 }
 
 .copy-success-message {

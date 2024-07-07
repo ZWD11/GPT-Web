@@ -14,11 +14,16 @@ const ChatWindow = {
           <div class="content" v-html="message.displayContent"></div>
         </div>
       </div>
-      <button id="scroll-to-bottom" @click="scrollToBottom" style="display: none;"><i class="fas fa-chevron-down"></i></button>
       <div class="input-area">
-        <label for="imageUpload" class="upload-button">
-          <i class="fas fa-image"></i> 
-        </label>
+        <div class="label-container">
+          <label @click="toggleVoice">
+              <i :class="isRecording ? 'fas fa-stop' : 'fas fa-microphone'"></i>
+          </label>
+          <label for="imageUpload" class="upload-button">
+            <i class="fas fa-image"></i> 
+          </label>
+          <label class="scroll" id="scroll-to-bottom" @click="scrollToBottom"><i class="fas fa-chevron-down"></i></label>
+        </div>
         <input type="file" id="imageUpload" style="display: none;"> 
         <div class="chat-input">
           <textarea v-model="newMessage" @keydown="handleKeyDown" placeholder="Enter 发送，Shift + Enter 换行" ref="textarea"></textarea>
@@ -31,6 +36,9 @@ const ChatWindow = {
   data() {
     return {
       newMessage: '',
+      isRecording: false,
+      recognition: null,
+      scroll: false,
     };
   },
   computed: {
@@ -42,7 +50,44 @@ const ChatWindow = {
       }
     }
   },
+  mounted() {
+    autosize(this.$refs.textarea);
+    this.setupVoiceRecognition();
+    this.hideScrollButton();
+  },
   methods: {
+    toggleVoice() {
+      if(this.isRecording){
+        this.recognition.stop();
+      }else{
+        this.recognition.start();
+        this.isRecording=true;
+      }
+    },
+    setupVoiceRecognition() {
+      const SpeechRecongnition = window.SpeechRecongnition || window.webkitSpeechRecognition;
+      if(SpeechRecongnition){
+        this.recognition = new SpeechRecongnition();
+        this.recognition.lang = "zh-CN";
+        this.recognition.continuous = false;
+
+        this.recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          this.newMessage = transcript;
+          this.sendMessage();
+        };
+
+        this.recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event);
+        };
+
+        this.recognition.onend = (event) => {
+          this.isRecording = false;
+        };
+      } else {
+        alert('抱歉，您的浏览器不支持语音识别功能。');
+      }
+    },
     sendMessage() {
       if (this.newMessage.trim() === '') return;
       const formattedMessage = this.newMessage;
@@ -50,6 +95,7 @@ const ChatWindow = {
       this.newMessage = '';
       autosize.destroy(this.$refs.textarea);
       this.$nextTick(() => {
+        autosize(this.$refs.textarea);
         if (typeof MathJax !== 'undefined') {
           MathJax.typesetPromise().then(() => {
             console.log('MathJax 渲染完成');
@@ -150,7 +196,7 @@ const ChatWindow = {
       this.selectedConversationIndex = index;
       this.currentConversation = index;
   
-      if (window.innerWidth <= 768) { 
+      if (window.innerWidth <= 600) { 
         this.isSidebarVisible = false;
       }
   
@@ -170,10 +216,7 @@ const ChatWindow = {
     } else {
       console.error('MathJax is not loaded');
     }
-  },
-  mounted() {
-    autosize(this.$refs.textarea);
-  },
+  }
 };
 const escapeHtml = (unsafe) => {
   return unsafe
@@ -209,6 +252,9 @@ const app = Vue.createApp({
     };
   },
   mounted() {
+    autosize(this.$refs.textarea);
+    this.setupVoiceRecognition();
+    this.setupVoiceRecognition();
     this.loadConversations();
     if (this.conversations.length === 0) {
       this.addNewConversation();
@@ -225,11 +271,42 @@ const app = Vue.createApp({
     });
   },
   methods: {
+    toggleVoice() {
+      if(this.isRecording){
+        this.recognition.stop();
+      }else{
+        this.recognition.start();
+        this.isRecording=true;
+      }
+    },
+    setupVoiceRecognition() {
+      const SpeechRecongnition = window.SpeechRecongnition || window.webkitSpeechRecognition;
+      if(SpeechRecongnition){
+        this.recognition = new SpeechRecongnition();
+        this.recognition.lang = "zh-CN";
+        this.recognition.continuous = false;
+
+        this.recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          this.newMessage = transcript;
+          this.sendMessage();
+        };
+
+        this.recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event);
+        };
+
+        this.recognition.onend = (event) => {
+          this.isRecording = false;
+        };
+      } else {
+        alert('抱歉，您的浏览器不支持语音识别功能。');
+      }
+    },
     sendMessage(message) {
       const currentMessages = this.conversations[this.currentConversation].messages;
       const escapedMessage = escapeHtml(message);
       const Messages = marked.parse(escapedMessage);
-      
       currentMessages.push({
         content: escapedMessage,
         isUser: true,
@@ -243,7 +320,7 @@ const app = Vue.createApp({
 
       this.sendMessageToAPI(message, this.currentConversation)
         .then((botMessage) => {
-          const botmessage = escapeHtml(botMessage);
+          const botmessage = botMessage;
           const markedbotmessage = marked.parse(botmessage);
           currentMessages.push({
             content: botMessage,
@@ -280,7 +357,7 @@ const app = Vue.createApp({
       });
     },
     async sendMessageToAPI(userMessage, conversationIndex) {
-      const apiKey = 'Api_key'; 
+      const apiKey = 'Your_Api_Key'; 
       const conversation = this.conversations[conversationIndex];
 
       try {
